@@ -59,6 +59,8 @@ resumate/
 ├── assets/
 └── .env
 
+yaml
+Copy code
 
 ---
 
@@ -67,24 +69,22 @@ resumate/
 1. Clone the repository
 ```bash
 git clone https://github.com/USERNAME/resumate.git
-
-
 Install dependencies
 
+bash
+Copy code
 npm install
-
-
 Create .env file
 
+env
+Copy code
 OPENAI_API_KEY=your_api_key_here
-
-
 Start the app
 
+bash
+Copy code
 npx expo start
-
 🔑 Firebase Setup
-
 Enable Email & Password Authentication
 
 Create a Firebase project
@@ -92,7 +92,6 @@ Create a Firebase project
 Add your Firebase config in firebase.js
 
 📌 Use Case
-
 This application is ideal for:
 
 Students
@@ -104,7 +103,6 @@ Job seekers
 Portfolio & academic projects
 
 🎯 Project Status
-
 🚧 Currently under development
 Planned improvements:
 
@@ -117,6 +115,5 @@ AI answer evaluation
 Dark mode
 
 👨‍💻 Developers
-
 ResuMate Team
 Built as a school / portfolio project using modern mobile development technologies.

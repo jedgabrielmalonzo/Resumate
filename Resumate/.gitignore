@@ -4,3 +4,9 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging

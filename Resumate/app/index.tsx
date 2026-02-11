@@ -1,6 +1,6 @@
 import { Redirect } from 'expo-router';
 
 export default function Index() {
-  // For now, always redirect to login while we debug
+  // Redirect to login first
   return <Redirect href="/auth/login" />;
 }

@@ -1,12 +1,15 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini AI with better error handling
-const getAIClient = () => {
+const getAIModel = () => {
   const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error('Gemini API key not configured');
   }
-  return new GoogleGenAI({ apiKey });
+  const genAI = new GoogleGenerativeAI(apiKey);
+  
+  // Using free tier Gemini 1.5 Flash model
+  return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 };
 
 export interface JobDetails {
@@ -30,12 +33,23 @@ export class InterviewAI {
     try {
       console.log('🤖 Attempting AI generation for:', jobDetails.jobTitle, 'at', jobDetails.companyName);
       
+      // Debug: List available models
       const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
       console.log('🔑 API Key available:', apiKey ? 'Yes' : 'No');
       console.log('🔑 API Key length:', apiKey ? apiKey.length : 0);
       
-      const ai = getAIClient();
-      console.log('✅ AI client initialized successfully');
+      if (apiKey) {
+        try {
+          const genAI = new GoogleGenerativeAI(apiKey);
+          const models = await genAI.listModels();
+          console.log('📋 Available models:', models.map(m => m.name));
+        } catch (listError: any) {
+          console.log('❌ Could not list models:', listError?.message || listError);
+        }
+      }
+      
+      const model = getAIModel();
+      console.log('✅ Model initialized successfully');
       
       const prompt = `
 You are a senior technical interviewer with 10+ years of experience.
@@ -68,13 +82,11 @@ Make questions realistic and relevant to the specific role.
       `;
 
       console.log('📤 Sending request to Gemini API...');
-      const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
-        contents: prompt,
-      });
+      const result = await model.generateContent(prompt);
       console.log('📥 Received response from Gemini API');
       
-      const text = response.text.trim();
+      const response = await result.response;
+      const text = response.text().trim();
       console.log('📝 Response text length:', text.length);
       console.log('📝 First 100 chars:', text.substring(0, 100));
       

@@ -9,7 +9,7 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { InterviewAI, JobDetails } from '@/services/interviewAI';
 
 const RED = '#c40000';
@@ -77,7 +77,9 @@ export default function InterviewFormScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Interview Prep</Text>
         
@@ -133,6 +135,7 @@ export default function InterviewFormScreen() {
         </View>
       </View>
     </ScrollView>
+    </>
   );
 }
 

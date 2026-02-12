@@ -1,16 +1,31 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Direct REST API call to Gemini
+const GEMINI_API_KEY = 'AIzaSyArUdrLGheUSyCI0gX85GPJVZvCi6dqv4Q';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
-// Initialize Gemini AI with better error handling
-const getAIModel = () => {
-  const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('Gemini API key not configured');
+async function callGeminiAPI(prompt: string): Promise<string> {
+  const response = await fetch(GEMINI_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': GEMINI_API_KEY,
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
   }
-  const genAI = new GoogleGenerativeAI(apiKey);
-  
-  // Using free tier Gemini 1.5 Flash model
-  return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-};
+
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
+}
 
 export interface JobDetails {
   jobTitle: string;
@@ -32,24 +47,6 @@ export class InterviewAI {
     // Try AI first, fallback if it fails
     try {
       console.log('🤖 Attempting AI generation for:', jobDetails.jobTitle, 'at', jobDetails.companyName);
-      
-      // Debug: List available models
-      const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-      console.log('🔑 API Key available:', apiKey ? 'Yes' : 'No');
-      console.log('🔑 API Key length:', apiKey ? apiKey.length : 0);
-      
-      if (apiKey) {
-        try {
-          const genAI = new GoogleGenerativeAI(apiKey);
-          const models = await genAI.listModels();
-          console.log('📋 Available models:', models.map(m => m.name));
-        } catch (listError: any) {
-          console.log('❌ Could not list models:', listError?.message || listError);
-        }
-      }
-      
-      const model = getAIModel();
-      console.log('✅ Model initialized successfully');
       
       const prompt = `
 You are a senior technical interviewer with 10+ years of experience.
@@ -81,12 +78,9 @@ Return ONLY valid JSON in this exact format:
 Make questions realistic and relevant to the specific role.
       `;
 
-      console.log('📤 Sending request to Gemini API...');
-      const result = await model.generateContent(prompt);
+      console.log('📤 Sending request to Gemini API (REST)...');
+      const text = await callGeminiAPI(prompt);
       console.log('📥 Received response from Gemini API');
-      
-      const response = await result.response;
-      const text = response.text().trim();
       console.log('📝 Response text length:', text.length);
       console.log('📝 First 100 chars:', text.substring(0, 100));
       

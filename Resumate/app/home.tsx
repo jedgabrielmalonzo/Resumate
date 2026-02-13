@@ -73,6 +73,20 @@ export default function Home() {
     router.push('/interview/form'); 
   };
 
+  const handleHome = () => {
+    // Already on home screen
+  };
+
+  const handleAccount = () => {
+    // Navigate to account screen
+    router.push('/Account'); 
+  };
+
+  const handleSettings = () => {
+    // Navigate to settings screen
+    router.push('/settings'); 
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -87,39 +101,68 @@ export default function Home() {
 
       {/* Main Content */}
       <Animated.View
-        style={{
-          opacity: fade,
-          transform: [{ translateY: slide }],
-          alignItems: "center",
-          width: "100%",
-          paddingHorizontal: 24,
-        }}
+        style={[
+          styles.content,
+          {
+            opacity: fade,
+            transform: [{ translateY: slide }],
+          }
+        ]}
       >
         <View style={styles.logoBox}>
           <Image 
-            source={require('../assets/images/ResuMate Logo.png')} 
+            source={require('../assets/images/newlogo.png')} 
             style={styles.logoImage}
-            resizeMode="cover"
+            resizeMode="contain"
           />
         </View>
 
-  
+        <Text style={styles.logoText}>RESUMATE</Text>
 
-        {/* Buttons */}
-        <TouchableOpacity 
-          style={styles.primaryButton}
-          onPress={handleBuildResume}
-        >
-          <Text style={styles.primaryButtonText}>Build my resume</Text>
-        </TouchableOpacity>
+        <Text style={styles.description}>
+          Your intelligent companion for finding{"\n"}
+          and securing your dream career.
+        </Text>
 
-        <TouchableOpacity 
-          style={styles.secondaryButton}
-          onPress={handleInterviewPrep}
-        >
-          <Text style={styles.secondaryButtonText}>Interview prep</Text>
-        </TouchableOpacity>
+        {/* Action Buttons - Horizontal Layout */}
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={handleBuildResume}
+          >
+            <Text style={styles.actionIcon}>📄</Text>
+            <Text style={styles.actionButtonText}>Build my{"\n"}resume</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={handleInterviewPrep}
+          >
+            <Text style={styles.actionIcon}>💼</Text>
+            <Text style={styles.actionButtonText}>Interview{"\n"}prep</Text>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNavigation}>
+        <TouchableOpacity style={styles.navItem} onPress={handleAccount}>
+          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navLabel}>Account</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.homeNavItem} onPress={handleHome}>
+          <View style={styles.homeCircle}>
+            <Text style={styles.homeIcon}>🏠</Text>
+          </View>
+          <Text style={styles.homeLabel}>Home</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navItem} onPress={handleSettings}>
+          <Text style={styles.navIcon}>⚙️</Text>
+          <Text style={styles.navLabel}>Settings</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -127,9 +170,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
 
   bgTop: {
@@ -152,23 +193,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff2f2",
   },
 
-  logoBox: {
-    width: 150,
-    height: 180,
-    borderRadius: 30,
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 18,
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 100, // Space for bottom navigation
   },
 
-  logoEmoji: {
-    fontSize: 40,
+  logoBox: {
+    marginBottom: 2,
   },
 
   logoImage: {
-    width: 350,
-    height: 350,
+    width: 200,
+    height: 200,
   },
 
   logoText: {
@@ -184,36 +223,103 @@ const styles = StyleSheet.create({
     color: "#555",
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: 30,
+    marginBottom: 40,
   },
 
-  primaryButton: {
-    width: "100%",
-    backgroundColor: RED,
-    paddingVertical: 16,
-    borderRadius: 18,
-    marginBottom: 14,
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 10,
   },
 
-  primaryButtonText: {
-    color: "#fff",
+  actionButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 30,
+    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    width: '45%',
+    minHeight: 140,
+  },
+
+  actionIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+
+  actionButtonText: {
     fontSize: 16,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-
-  secondaryButton: {
-    width: "100%",
-    borderWidth: 2,
-    borderColor: RED,
-    paddingVertical: 16,
-    borderRadius: 18,
-  },
-
-  secondaryButtonText: {
+    fontWeight: '600',
     color: RED,
-    fontSize: 16,
-    fontWeight: "800",
-    textAlign: "center",
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+
+  bottomNavigation: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 15,
+    paddingBottom: 35,
+    elevation: 8,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+
+  navIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+
+  navLabel: {
+    fontSize: 12,
+    color: '#666',
+  },
+
+  homeNavItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+
+  homeCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: RED,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+
+  homeIcon: {
+    fontSize: 20,
+    color: 'white',
+  },
+
+  homeLabel: {
+    fontSize: 12,
+    color: RED,
+    fontWeight: '600',
   },
 });

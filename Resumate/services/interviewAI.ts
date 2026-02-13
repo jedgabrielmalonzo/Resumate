@@ -1,5 +1,7 @@
+import Constants from 'expo-constants';
+
 // Direct REST API call to Gemini
-const GEMINI_API_KEY = 'AIzaSyArUdrLGheUSyCI0gX85GPJVZvCi6dqv4Q';
+const GEMINI_API_KEY = Constants.expoConfig?.extra?.geminiApiKey || process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
 async function callGeminiAPI(prompt: string): Promise<string> {

@@ -284,7 +284,7 @@ export default function ResumeFormScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView style={[styles.container, { backgroundColor }]}>
+      <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           <ThemedView style={styles.content}>
             <ThemedText style={styles.title}>Build Your Resume</ThemedText>

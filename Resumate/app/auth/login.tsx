@@ -11,12 +11,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const RED = '#c40000';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
@@ -128,15 +130,27 @@ export default function LoginScreen() {
           editable={!loading}
         />
 
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#999"
-          secureTextEntry
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          editable={!loading}
-        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#999"
+            secureTextEntry={!showPassword}
+            style={styles.passwordInput}
+            value={password}
+            onChangeText={setPassword}
+            editable={!loading}
+          />
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Ionicons
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={20}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity 
           style={[styles.mainButton, loading && styles.mainButtonDisabled]} 
@@ -213,6 +227,23 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 14,
     backgroundColor: '#fafafa',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 18,
+    marginTop: 14,
+    backgroundColor: '#fafafa',
+    paddingRight: 15,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 15,
+  },
+  eyeButton: {
+    padding: 5,
   },
   mainButton: {
     backgroundColor: RED,

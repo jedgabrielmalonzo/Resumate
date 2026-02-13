@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
 
 const RED = '#c40000';
 
@@ -42,6 +44,7 @@ const previousResumes = [
 
 export default function Account() {
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleViewResume = (resumeId: string) => {
     // Navigate to resume preview
@@ -53,9 +56,13 @@ export default function Account() {
     console.log('Edit profile');
   };
 
-  const handleLogout = () => {
-    // Handle logout
-    console.log('Logout');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace('/auth/login');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to sign out. Please try again.');
+    }
   };
 
   const handleHome = () => {
@@ -256,7 +263,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   statsContainer: {
     flexDirection: 'row',

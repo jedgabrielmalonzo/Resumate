@@ -96,15 +96,14 @@ export default function Home() {
         }}
       >
         <View style={styles.logoBox}>
-          <Text style={styles.logoEmoji}>📄</Text>
+          <Image 
+            source={require('../assets/images/ResuMate Logo.png')} 
+            style={styles.logoImage}
+            resizeMode="cover"
+          />
         </View>
 
-        <Text style={styles.logoText}>RESUMATE</Text>
-
-        <Text style={styles.description}>
-          Your intelligent companion for finding{"\n"}
-          and securing your dream career.
-        </Text>
+  
 
         {/* Buttons */}
         <TouchableOpacity 
@@ -154,10 +153,10 @@ const styles = StyleSheet.create({
   },
 
   logoBox: {
-    width: 90,
-    height: 90,
-    borderRadius: 22,
-    backgroundColor: "#f2f2f2",
+    width: 150,
+    height: 180,
+    borderRadius: 30,
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 18,
@@ -165,6 +164,11 @@ const styles = StyleSheet.create({
 
   logoEmoji: {
     fontSize: 40,
+  },
+
+  logoImage: {
+    width: 350,
+    height: 350,
   },
 
   logoText: {

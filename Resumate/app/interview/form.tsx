@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { InterviewAI, JobDetails } from '@/services/interviewAI';
+import BackButton from '@/components/ui/BackButton';
 
 const RED = '#c40000';
 
@@ -81,6 +82,7 @@ export default function InterviewFormScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <ScrollView style={styles.container}>
       <View style={styles.content}>
+        <BackButton />
         <Text style={styles.title}>Interview Prep</Text>
         
         <View style={styles.infoCard}>

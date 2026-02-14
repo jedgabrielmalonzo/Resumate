@@ -14,6 +14,7 @@ import { ThemedText } from '../../components/themed-text';
 import { ThemedView } from '../../components/themed-view';
 import { Colors } from '../../constants/theme';
 import { useThemeColor } from '../../hooks/use-theme-color';
+import BackButton from '@/components/ui/BackButton';
 
 const RED = "#c40000";
 
@@ -287,6 +288,7 @@ export default function ResumeFormScreen() {
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           <ThemedView style={styles.content}>
+            <BackButton />
             <ThemedText style={styles.title}>Build Your Resume</ThemedText>
             <ThemedText style={styles.subtitle}>
               Fill out your information to create a professional resume

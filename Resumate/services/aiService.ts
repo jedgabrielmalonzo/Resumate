@@ -50,14 +50,14 @@ Instructions:
 }
 
 export async function getTemplateRecommendations(userData: any, jobField: string, templates: ResumeTemplate[]) {
-	// prompt for Gemini
-	const templateList = templates.map(t => `ID: ${t.id}, Name: ${t.name}, Description: ${t.description}`).join('\n');
-	const prompt = `Given the following user information: ${JSON.stringify(userData)}\nTarget job/field: ${jobField}\nHere are available resume templates:\n${templateList}\nRecommend the 3 most suitable template IDs for this user and explain your choices.`;
+  // prompt for Gemini
+  const templateList = templates.map(t => `ID: ${t.id}, Name: ${t.name}, Description: ${t.description}`).join('\n');
+  const prompt = `Given the following user information: ${JSON.stringify(userData)}\nTarget job/field: ${jobField}\nHere are available resume templates:\n${templateList}\nRecommend the 3 most suitable template IDs for this user and explain your choices.`;
 
-	// Example response format
-	return [
-		{ id: 'classic', reason: 'Best for general entry-level jobs.' },
-		{ id: 'modern', reason: 'Highlights skills for recent graduates.' },
-		{ id: 'it', reason: 'Tailored for IT/CS graduates.' },
-	];
+  // Example response format
+  return [
+    { id: 'classic', reason: 'Best for general entry-level jobs.' },
+    { id: 'modern', reason: 'Highlights skills for recent graduates.' },
+    { id: 'it', reason: 'Tailored for IT/CS graduates.' },
+  ];
 }

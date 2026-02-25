@@ -15,6 +15,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
+import { ThemedText } from '../../components/themed-text';
+import { ThemedView } from '../../components/themed-view';
+import { Colors } from '../../constants/theme';
+import { useThemeColor } from '../../hooks/use-theme-color';
 import BackButton from '@/components/ui/BackButton';
 
 const RED = "#c40000";
@@ -54,9 +58,84 @@ interface Achievement {
   description: string;
 }
 
+const InputField = ({
+  placeholder,
+  value,
+  onChangeText,
+  multiline = false,
+  numberOfLines = 1,
+  keyboardType = 'default',
+  containerStyle = {},
+  textColor = '#333',
+  ...props
+}: {
+  placeholder: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  multiline?: boolean;
+  numberOfLines?: number;
+  keyboardType?: 'default' | 'email-address' | 'phone-pad';
+  containerStyle?: any;
+  textColor?: string;
+  [key: string]: any;
+}) => (
+  <View style={[styles.inputContainer, containerStyle]}>
+    <TextInput
+      placeholder={placeholder}
+      value={value}
+      onChangeText={onChangeText}
+      style={[
+        styles.textInput,
+        { color: textColor },
+        multiline && styles.multilineInput
+      ]}
+      multiline={multiline}
+      numberOfLines={numberOfLines}
+      keyboardType={keyboardType}
+      placeholderTextColor="#999"
+      {...props}
+    />
+  </View>
+);
+
+const PrimaryButton = ({
+  title,
+  onPress,
+  style = {}
+}: {
+  title: string;
+  onPress: () => void;
+  style?: any;
+}) => (
+  <TouchableOpacity
+    style={[styles.primaryButton, style]}
+    onPress={onPress}
+  >
+    <Text style={styles.primaryButtonText}>{title}</Text>
+  </TouchableOpacity>
+);
+
+const Checkbox = ({
+  checked,
+  onPress,
+  label
+}: {
+  checked: boolean;
+  onPress: () => void;
+  label: string;
+}) => (
+  <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
+    <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+      {checked && <Text style={styles.checkboxText}>✓</Text>}
+    </View>
+    <Text style={styles.checkboxLabel}>{label}</Text>
+  </TouchableOpacity>
+);
+
 export default function ResumeFormScreen() {
-  const textColor = "#333";
-  const backgroundColor = "#fff";
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+  const backgroundColor = useThemeColor({}, 'background');
   const { setGeneratedResumeData } = useResumeContext();
   const router = useRouter();
 
@@ -257,92 +336,23 @@ export default function ResumeFormScreen() {
     }
   };
 
-  const InputField = ({
-    placeholder,
-    value,
-    onChangeText,
-    multiline = false,
-    numberOfLines = 1,
-    keyboardType = 'default',
-    containerStyle = {},
-    ...props
-  }: {
-    placeholder: string;
-    value: string;
-    onChangeText: (text: string) => void;
-    multiline?: boolean;
-    numberOfLines?: number;
-    keyboardType?: 'default' | 'email-address' | 'phone-pad';
-    containerStyle?: any;
-  }) => (
-    <View style={[styles.inputContainer, containerStyle]}>
-      <TextInput
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        style={[
-          styles.textInput,
-          { color: textColor },
-          multiline && styles.multilineInput
-        ]}
-        multiline={multiline}
-        numberOfLines={numberOfLines}
-        keyboardType={keyboardType}
-        placeholderTextColor="#999"
-        {...props}
-      />
-    </View>
-  );
 
-  const PrimaryButton = ({
-    title,
-    onPress,
-    style = {}
-  }: {
-    title: string;
-    onPress: () => void;
-    style?: any;
-  }) => (
-    <TouchableOpacity
-      style={[styles.primaryButton, style]}
-      onPress={onPress}
-    >
-      <Text style={styles.primaryButtonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-
-  const Checkbox = ({
-    checked,
-    onPress,
-    label
-  }: {
-    checked: boolean;
-    onPress: () => void;
-    label: string;
-  }) => (
-    <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-      <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
-        {checked && <Text style={styles.checkboxText}>✓</Text>}
-      </View>
-      <Text style={styles.checkboxLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-          <View style={styles.content}>
+          <ThemedView style={styles.content}>
             <BackButton />
-            <Text style={styles.title}>Build Your Resume</Text>
-            <Text style={styles.subtitle}>
+            <ThemedText style={styles.title}>Build Your Resume</ThemedText>
+            <ThemedText style={styles.subtitle}>
               Fill out your information to create a professional resume
-            </Text>
+            </ThemedText>
 
             {showRecommendations && (
-              <View style={[styles.section, { backgroundColor: '#f7f7f7', borderRadius: 8, marginBottom: 24 }]}>
-                <Text style={[styles.sectionTitle, { marginBottom: 8 }]}>Recommended Templates</Text>
+              <ThemedView style={[styles.section, { backgroundColor: '#f7f7f7', borderRadius: 8, marginBottom: 24 }]}>
+                <ThemedText style={[styles.sectionTitle, { marginBottom: 8 }]}>Recommended Templates</ThemedText>
                 {templateRecommendations.map((rec, idx) => {
                   const template = resumeTemplates.find(t => t.id === rec.id);
                   return template ? (
@@ -381,13 +391,13 @@ export default function ResumeFormScreen() {
                     </Text>
                   </TouchableOpacity>
                 )}
-              </View>
+              </ThemedView>
             )}
 
             {!showRecommendations && (
               <>
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Personal Information</Text>
+                <ThemedView style={styles.section}>
+                  <ThemedText style={styles.sectionTitle}>Personal Information</ThemedText>
 
                   <View style={styles.row}>
                     <InputField
@@ -395,12 +405,14 @@ export default function ResumeFormScreen() {
                       value={personalInfo.firstName}
                       onChangeText={(value: string) => updatePersonalInfo('firstName', value)}
                       containerStyle={[styles.inputContainer, styles.halfInput]}
+                      textColor={textColor}
                     />
                     <InputField
                       placeholder="Last Name"
                       value={personalInfo.lastName}
                       onChangeText={(value: string) => updatePersonalInfo('lastName', value)}
                       containerStyle={[styles.inputContainer, styles.halfInput]}
+                      textColor={textColor}
                     />
                   </View>
 
@@ -410,6 +422,7 @@ export default function ResumeFormScreen() {
                     onChangeText={(value: string) => updatePersonalInfo('email', value)}
                     containerStyle={styles.inputContainer}
                     keyboardType="email-address"
+                    textColor={textColor}
                   />
 
                   <InputField
@@ -418,6 +431,7 @@ export default function ResumeFormScreen() {
                     onChangeText={(value: string) => updatePersonalInfo('phone', value)}
                     containerStyle={styles.inputContainer}
                     keyboardType="phone-pad"
+                    textColor={textColor}
                   />
 
                   <InputField
@@ -425,6 +439,7 @@ export default function ResumeFormScreen() {
                     value={personalInfo.address}
                     onChangeText={(value: string) => updatePersonalInfo('address', value)}
                     containerStyle={styles.inputContainer}
+                    textColor={textColor}
                   />
 
                   <View style={styles.row}>
@@ -433,25 +448,28 @@ export default function ResumeFormScreen() {
                       value={personalInfo.city}
                       onChangeText={(value: string) => updatePersonalInfo('city', value)}
                       containerStyle={[styles.inputContainer, styles.flexInput]}
+                      textColor={textColor}
                     />
                     <InputField
                       placeholder="State"
                       value={personalInfo.state}
                       onChangeText={(value: string) => updatePersonalInfo('state', value)}
                       containerStyle={[styles.inputContainer, styles.quarterInput]}
+                      textColor={textColor}
                     />
                     <InputField
                       placeholder="ZIP"
                       value={personalInfo.zipCode}
                       onChangeText={(value: string) => updatePersonalInfo('zipCode', value)}
                       containerStyle={[styles.inputContainer, styles.quarterInput]}
+                      textColor={textColor}
                     />
                   </View>
-                </View>
+                </ThemedView>
 
                 {/* Summary Section */}
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Professional Summary</Text>
+                <ThemedView style={styles.section}>
+                  <ThemedText style={styles.sectionTitle}>Professional Summary</ThemedText>
                   <InputField
                     placeholder="Write a brief summary of your professional background and career objectives..."
                     value={professionalSummary}
@@ -459,12 +477,13 @@ export default function ResumeFormScreen() {
                     containerStyle={styles.inputContainer}
                     multiline
                     numberOfLines={4}
+                    textColor={textColor}
                   />
-                </View>
+                </ThemedView>
 
                 {/* Work Experience Section */}
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Work Experience</Text>
+                <ThemedView style={styles.section}>
+                  <ThemedText style={styles.sectionTitle}>Work Experience</ThemedText>
 
                   <Checkbox
                     checked={hasWorkExperience}
@@ -475,22 +494,22 @@ export default function ResumeFormScreen() {
                   {hasWorkExperience && (
                     <>
                       <View style={styles.sectionHeader}>
-                        <Text style={styles.subSectionTitle}>Experience Details</Text>
+                        <ThemedText style={styles.subSectionTitle}>Experience Details</ThemedText>
                         <TouchableOpacity onPress={addWorkExperience} style={styles.addButton}>
-                          <Text style={styles.addButtonText}>+ Add</Text>
+                          <ThemedText style={styles.addButtonText}>+ Add</ThemedText>
                         </TouchableOpacity>
                       </View>
 
                       {workExperience.map((experience, index) => (
                         <View key={index} style={styles.experienceItem}>
                           <View style={styles.itemHeader}>
-                            <Text style={styles.itemNumber}>Experience {index + 1}</Text>
+                            <ThemedText style={styles.itemNumber}>Experience {index + 1}</ThemedText>
                             {workExperience.length > 1 && (
                               <TouchableOpacity
                                 onPress={() => removeWorkExperience(index)}
                                 style={styles.removeButton}
                               >
-                                <Text style={styles.removeButtonText}>Remove</Text>
+                                <ThemedText style={styles.removeButtonText}>Remove</ThemedText>
                               </TouchableOpacity>
                             )}
                           </View>
@@ -500,6 +519,7 @@ export default function ResumeFormScreen() {
                             value={experience.jobTitle}
                             onChangeText={(value: string) => updateWorkExperience(index, 'jobTitle', value)}
                             containerStyle={styles.inputContainer}
+                            textColor={textColor}
                           />
 
                           <InputField
@@ -507,6 +527,7 @@ export default function ResumeFormScreen() {
                             value={experience.company}
                             onChangeText={(value: string) => updateWorkExperience(index, 'company', value)}
                             containerStyle={styles.inputContainer}
+                            textColor={textColor}
                           />
 
                           <InputField
@@ -514,6 +535,7 @@ export default function ResumeFormScreen() {
                             value={experience.location}
                             onChangeText={(value: string) => updateWorkExperience(index, 'location', value)}
                             containerStyle={styles.inputContainer}
+                            textColor={textColor}
                           />
 
                           <View style={styles.row}>
@@ -522,12 +544,14 @@ export default function ResumeFormScreen() {
                               value={experience.startDate}
                               onChangeText={(value: string) => updateWorkExperience(index, 'startDate', value)}
                               containerStyle={[styles.inputContainer, styles.halfInput]}
+                              textColor={textColor}
                             />
                             <InputField
                               placeholder="End Date (MM/YYYY)"
                               value={experience.endDate}
                               onChangeText={(value: string) => updateWorkExperience(index, 'endDate', value)}
                               containerStyle={[styles.inputContainer, styles.halfInput]}
+                              textColor={textColor}
                             />
                           </View>
 
@@ -538,32 +562,33 @@ export default function ResumeFormScreen() {
                             containerStyle={styles.inputContainer}
                             multiline
                             numberOfLines={3}
+                            textColor={textColor}
                           />
                         </View>
                       ))}
                     </>
                   )}
-                </View>
+                </ThemedView>
 
                 {/* Education Section */}
-                <View style={styles.section}>
+                <ThemedView style={styles.section}>
                   <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Education</Text>
+                    <ThemedText style={styles.sectionTitle}>Education</ThemedText>
                     <TouchableOpacity onPress={addEducation} style={styles.addButton}>
-                      <Text style={styles.addButtonText}>+ Add</Text>
+                      <ThemedText style={styles.addButtonText}>+ Add</ThemedText>
                     </TouchableOpacity>
                   </View>
 
                   {education.map((edu, index) => (
                     <View key={index} style={styles.experienceItem}>
                       <View style={styles.itemHeader}>
-                        <Text style={styles.itemNumber}>Education {index + 1}</Text>
+                        <ThemedText style={styles.itemNumber}>Education {index + 1}</ThemedText>
                         {education.length > 1 && (
                           <TouchableOpacity
                             onPress={() => removeEducation(index)}
                             style={styles.removeButton}
                           >
-                            <Text style={styles.removeButtonText}>Remove</Text>
+                            <ThemedText style={styles.removeButtonText}>Remove</ThemedText>
                           </TouchableOpacity>
                         )}
                       </View>
@@ -573,6 +598,7 @@ export default function ResumeFormScreen() {
                         value={edu.degree}
                         onChangeText={(value: string) => updateEducation(index, 'degree', value)}
                         containerStyle={styles.inputContainer}
+                        textColor={textColor}
                       />
 
                       <InputField
@@ -580,6 +606,7 @@ export default function ResumeFormScreen() {
                         value={edu.institution}
                         onChangeText={(value: string) => updateEducation(index, 'institution', value)}
                         containerStyle={styles.inputContainer}
+                        textColor={textColor}
                       />
 
                       <InputField
@@ -587,6 +614,7 @@ export default function ResumeFormScreen() {
                         value={edu.location}
                         onChangeText={(value: string) => updateEducation(index, 'location', value)}
                         containerStyle={styles.inputContainer}
+                        textColor={textColor}
                       />
 
                       <View style={styles.row}>
@@ -595,24 +623,26 @@ export default function ResumeFormScreen() {
                           value={edu.graduationDate}
                           onChangeText={(value: string) => updateEducation(index, 'graduationDate', value)}
                           containerStyle={[styles.inputContainer, styles.halfInput]}
+                          textColor={textColor}
                         />
                         <InputField
                           placeholder="GPA (Optional)"
                           value={edu.gpa}
                           onChangeText={(value: string) => updateEducation(index, 'gpa', value)}
                           containerStyle={[styles.inputContainer, styles.halfInput]}
+                          textColor={textColor}
                         />
                       </View>
                     </View>
                   ))}
-                </View>
+                </ThemedView>
 
                 {/* Skills */}
-                <View style={styles.section}>
+                <ThemedView style={styles.section}>
                   <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Skills</Text>
+                    <ThemedText style={styles.sectionTitle}>Skills</ThemedText>
                     <TouchableOpacity onPress={addSkill} style={styles.addButton}>
-                      <Text style={styles.addButtonText}>+ Add</Text>
+                      <ThemedText style={styles.addButtonText}>+ Add</ThemedText>
                     </TouchableOpacity>
                   </View>
 
@@ -623,38 +653,39 @@ export default function ResumeFormScreen() {
                         value={skill}
                         onChangeText={(value: string) => updateSkill(index, value)}
                         containerStyle={[styles.inputContainer, styles.flexInput]}
+                        textColor={textColor}
                       />
                       {skills.length > 1 && (
                         <TouchableOpacity
                           onPress={() => removeSkill(index)}
                           style={styles.skillRemoveButton}
                         >
-                          <Text style={styles.removeButtonText}>×</Text>
+                          <ThemedText style={styles.removeButtonText}>×</ThemedText>
                         </TouchableOpacity>
                       )}
                     </View>
                   ))}
-                </View>
+                </ThemedView>
 
                 {/* Achievements */}
-                <View style={styles.section}>
+                <ThemedView style={styles.section}>
                   <View style={styles.sectionHeader}>
-                    <Text style={[styles.sectionTitle, styles.achievementTitle]}>Achievements & Certifications</Text>
+                    <ThemedText style={[styles.sectionTitle, styles.achievementTitle]}>Achievements & Certifications</ThemedText>
                     <TouchableOpacity onPress={addAchievement} style={styles.addButton}>
-                      <Text style={styles.addButtonText}>+ Add</Text>
+                      <ThemedText style={styles.addButtonText}>+ Add</ThemedText>
                     </TouchableOpacity>
                   </View>
 
                   {achievements.map((achievement, index) => (
                     <View key={index} style={styles.experienceItem}>
                       <View style={styles.itemHeader}>
-                        <Text style={styles.itemNumber}>Achievement {index + 1}</Text>
+                        <ThemedText style={styles.itemNumber}>Achievement {index + 1}</ThemedText>
                         {achievements.length > 1 && (
                           <TouchableOpacity
                             onPress={() => removeAchievement(index)}
                             style={styles.removeButton}
                           >
-                            <Text style={styles.removeButtonText}>Remove</Text>
+                            <ThemedText style={styles.removeButtonText}>Remove</ThemedText>
                           </TouchableOpacity>
                         )}
                       </View>
@@ -664,6 +695,7 @@ export default function ResumeFormScreen() {
                         value={achievement.title}
                         onChangeText={(value: string) => updateAchievement(index, 'title', value)}
                         containerStyle={styles.inputContainer}
+                        textColor={textColor}
                       />
 
                       <InputField
@@ -671,6 +703,7 @@ export default function ResumeFormScreen() {
                         value={achievement.issuer}
                         onChangeText={(value: string) => updateAchievement(index, 'issuer', value)}
                         containerStyle={styles.inputContainer}
+                        textColor={textColor}
                       />
 
                       <InputField
@@ -678,6 +711,7 @@ export default function ResumeFormScreen() {
                         value={achievement.date}
                         onChangeText={(value: string) => updateAchievement(index, 'date', value)}
                         containerStyle={styles.inputContainer}
+                        textColor={textColor}
                       />
 
                       <InputField
@@ -687,22 +721,23 @@ export default function ResumeFormScreen() {
                         containerStyle={styles.inputContainer}
                         multiline
                         numberOfLines={2}
+                        textColor={textColor}
                       />
                     </View>
                   ))}
-                </View>
+                </ThemedView>
 
                 {/* Build Resume Button */}
-                <View style={styles.buttonContainer}>
+                <ThemedView style={styles.buttonContainer}>
                   <PrimaryButton
                     title="Build Resume"
                     onPress={handleBuildResume}
                     style={styles.primaryButton}
                   />
-                </View>
+                </ThemedView>
               </>
             )}
-          </View>
+          </ThemedView>
         </ScrollView>
       </SafeAreaView>
     </>

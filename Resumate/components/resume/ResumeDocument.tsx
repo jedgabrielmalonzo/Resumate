@@ -1,0 +1,84 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { GeneratedResumeData } from '@/context/ResumeContext';
+
+interface Props {
+  data: GeneratedResumeData;
+  templateId: string;
+}
+
+const TEMPLATE_STYLES: Record<string, { accent: string; headerText: string }> = {
+  classic: { accent: '#2c3e50', headerText: '#ffffff' },
+  modern: { accent: '#c40000', headerText: '#ffffff' },
+  it: { accent: '#1565c0', headerText: '#ffffff' },
+};
+
+export default function ResumeDocument({ data, templateId }: Props) {
+  const style = TEMPLATE_STYLES[templateId] ?? TEMPLATE_STYLES.classic;
+
+  return (
+    <View style={styles.paper}>
+      {data.sections.map((section, index) => (
+        <View key={index} style={styles.section}>
+          <View style={[styles.sectionHeader, { backgroundColor: style.accent }]}>
+            <Text style={[styles.sectionTitle, { color: style.headerText }]}>
+              {section.title}
+            </Text>
+          </View>
+          <View style={styles.sectionBody}>
+            {section.content.split('\n').map((line, i) => {
+              if (!line.trim()) return null;
+              const isBullet = line.trimStart().startsWith('•');
+              return (
+                <Text key={i} style={[styles.contentLine, isBullet && styles.bullet]}>
+                  {line}
+                </Text>
+              );
+            })}
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  paper: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+    marginHorizontal: 4,
+    marginVertical: 8,
+  },
+  section: {
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 3,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+  },
+  sectionBody: {
+    paddingHorizontal: 4,
+  },
+  contentLine: {
+    fontSize: 13,
+    color: '#333',
+    lineHeight: 21,
+  },
+  bullet: {
+    paddingLeft: 8,
+  },
+});

@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { resumeTemplates } from '@/components/resume/templates';
+import { getTemplateRecommendations, generateResume } from '@/services/aiService';
+import { useResumeContext } from '@/context/ResumeContext';
+import { useRouter } from 'expo-router';
+
 import {
   View,
   Text,
@@ -57,6 +62,8 @@ export default function ResumeFormScreen() {
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
   const backgroundColor = useThemeColor({}, 'background');
+  const { setGeneratedResumeData } = useResumeContext();
+  const router = useRouter();
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: '',
@@ -203,12 +210,58 @@ export default function ResumeFormScreen() {
     }
   };
 
-  const handleBuildResume = () => {
-    // TODO: Implement resume building functionality
-    Alert.alert('Build Resume', 'Resume building functionality will be implemented soon!');
+  const [templateRecommendations, setTemplateRecommendations] = useState<any[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+
+  const handleGenerateResume = async () => {
+    const template = resumeTemplates.find(t => t.id === selectedTemplateId);
+    if (!template) return;
+    setGenerating(true);
+    const userData = {
+      personalInfo,
+      professionalSummary,
+      workExperience,
+      education,
+      skills,
+      achievements,
+    };
+    try {
+      const result = await generateResume(userData, template);
+      setGeneratedResumeData(result);
+      router.push('/resume/result');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to generate resume. Please try again.');
+    } finally {
+      setGenerating(false);
+    }
   };
 
-  // Custom Input Component
+  const handleBuildResume = async () => {
+    setLoadingTemplates(true);
+    
+    const userData = {
+      personalInfo,
+      professionalSummary,
+      workExperience,
+      education,
+      skills,
+      achievements,
+    };
+    const jobField = professionalSummary || '';
+    try {
+      const recommendations = await getTemplateRecommendations(userData, jobField, resumeTemplates);
+      setTemplateRecommendations(recommendations);
+      setShowRecommendations(true);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to get template recommendations.');
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
   const InputField = ({ 
     placeholder, 
     value, 
@@ -246,7 +299,6 @@ export default function ResumeFormScreen() {
     </View>
   );
 
-  // Custom Button Component
   const PrimaryButton = ({ 
     title, 
     onPress, 
@@ -264,7 +316,6 @@ export default function ResumeFormScreen() {
     </TouchableOpacity>
   );
 
-  // Custom Checkbox Component
   const Checkbox = ({ 
     checked, 
     onPress, 
@@ -294,8 +345,53 @@ export default function ResumeFormScreen() {
               Fill out your information to create a professional resume
             </ThemedText>
 
-          {/* Personal Information Section */}
-          <ThemedView style={styles.section}>
+            {showRecommendations && (
+              <ThemedView style={[styles.section, { backgroundColor: '#f7f7f7', borderRadius: 8, marginBottom: 24 }]}> 
+                <ThemedText style={[styles.sectionTitle, { marginBottom: 8 }]}>Recommended Templates</ThemedText>
+                {templateRecommendations.map((rec, idx) => {
+                  const template = resumeTemplates.find(t => t.id === rec.id);
+                  return template ? (
+                    <View key={template.id} style={{ marginBottom: 16, borderWidth: 1, borderColor: selectedTemplateId === template.id ? '#007AFF' : '#ddd', borderRadius: 6, padding: 12, backgroundColor: selectedTemplateId === template.id ? '#e6f0ff' : '#fff' }}>
+                      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{template.name}</Text>
+                      <Text style={{ color: '#555', marginBottom: 4 }}>{template.description}</Text>
+                      <Text style={{ fontStyle: 'italic', color: '#007AFF', marginBottom: 8 }}>{rec.reason}</Text>
+                      <TouchableOpacity
+                        style={{ backgroundColor: selectedTemplateId === template.id ? '#007AFF' : '#eee', padding: 8, borderRadius: 4 }}
+                        onPress={() => setSelectedTemplateId(template.id)}
+                      >
+                        <Text style={{ color: selectedTemplateId === template.id ? '#fff' : '#007AFF', textAlign: 'center' }}>
+                          {selectedTemplateId === template.id ? 'Selected' : 'Select this template'}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : null;
+                })}
+
+                <TouchableOpacity
+                  style={{ marginTop: 8, alignSelf: 'center' }}
+                  onPress={() => setShowRecommendations(false)}
+                >
+                  <Text style={{ color: '#007AFF', textDecorationLine: 'underline' }}>Browse all templates</Text>
+                </TouchableOpacity>
+
+                {/* Resume Button */}
+                {selectedTemplateId && (
+                  <TouchableOpacity
+                    style={{ marginTop: 20, backgroundColor: '#c40000', padding: 16, borderRadius: 10, alignItems: 'center' }}
+                    onPress={handleGenerateResume}
+                    disabled={generating}
+                  >
+                    <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>
+                      {generating ? 'Generating...' : '✨ Generate Resume'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </ThemedView>
+            )}
+
+            {!showRecommendations && (
+              <>
+              <ThemedView style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Personal Information</ThemedText>
             
             <View style={styles.row}>
@@ -357,8 +453,8 @@ export default function ResumeFormScreen() {
               />
             </View>
           </ThemedView>
-
-          {/* Professional Summary Section */}
+          
+          {/* Summary Section */}
           <ThemedView style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Professional Summary</ThemedText>
             <InputField
@@ -516,7 +612,7 @@ export default function ResumeFormScreen() {
             ))}
           </ThemedView>
 
-          {/* Skills Section */}
+          {/* Skills */}
           <ThemedView style={styles.section}>
             <View style={styles.sectionHeader}>
               <ThemedText style={styles.sectionTitle}>Skills</ThemedText>
@@ -545,7 +641,7 @@ export default function ResumeFormScreen() {
             ))}
           </ThemedView>
 
-          {/* Achievements Section */}
+          {/* Achievements */}
           <ThemedView style={styles.section}>
             <View style={styles.sectionHeader}>
               <ThemedText style={[styles.sectionTitle, styles.achievementTitle]}>Achievements & Certifications</ThemedText>
@@ -609,7 +705,9 @@ export default function ResumeFormScreen() {
               style={styles.primaryButton}
             />
           </ThemedView>
-        </ThemedView>
+              </>
+            )}
+          </ThemedView>
       </ScrollView>
     </SafeAreaView>
     </>

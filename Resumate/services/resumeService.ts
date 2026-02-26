@@ -53,8 +53,8 @@ export const resumeService = {
         try {
             const q = query(
                 collection(db, RESUMES_COLLECTION),
-                where('userId', '==', userId),
-                orderBy('createdAt', 'desc')
+                where('userId', '==', userId)
+                // orderBy('createdAt', 'desc') // Requires a composite index in Firestore
             );
 
             const querySnapshot = await getDocs(q);

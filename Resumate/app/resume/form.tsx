@@ -306,7 +306,7 @@ export default function ResumeFormScreen() {
     try {
       const result = await generateResume(userData, template);
       setGeneratedResumeData(result);
-      router.push('/resume/result');
+      router.push('/Account');
     } catch (error) {
       Alert.alert('Error', 'Failed to generate resume. Please try again.');
     } finally {

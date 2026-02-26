@@ -108,9 +108,9 @@ export default function Account() {
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="light-content" backgroundColor={RED} />
+      <StatusBar barStyle="dark-content" />
 
-      <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+      <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
         <ScreenHeader title="Account" backLabel="Home" />
       </View>
 
@@ -279,6 +279,9 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flex: 1,
+  },
+  quarterInput: {
+    flex: 0.7,
   },
   userName: {
     fontSize: 20,

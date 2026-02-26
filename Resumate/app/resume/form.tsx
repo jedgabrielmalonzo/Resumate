@@ -3,6 +3,8 @@ import { resumeTemplates } from '@/components/resume/templates';
 import { getTemplateRecommendations, generateResume } from '@/services/aiService';
 import { useResumeContext } from '@/context/ResumeContext';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
+import { resumeService } from '@/services/resumeService';
 
 import {
   View,
@@ -138,6 +140,7 @@ export default function ResumeFormScreen() {
   const tintColor = useThemeColor({}, 'tint');
   const backgroundColor = useThemeColor({}, 'background');
   const { setGeneratedResumeData } = useResumeContext();
+  const { user } = useAuth();
   const router = useRouter();
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
@@ -306,6 +309,18 @@ export default function ResumeFormScreen() {
     try {
       const result = await generateResume(userData, template);
       setGeneratedResumeData(result);
+
+      // Save to Firebase before redirecting
+      if (user?.uid) {
+        try {
+          await resumeService.saveResume(user.uid, result, selectedTemplateId ?? 'classic');
+          console.log('Resume saved to Firestore from form');
+        } catch (saveError) {
+          console.error('Failed to save resume:', saveError);
+          // We still redirect, but log the error
+        }
+      }
+
       router.push('/Account');
     } catch (error) {
       Alert.alert('Error', 'Failed to generate resume. Please try again.');
@@ -834,7 +849,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quarterInput: {
-    flex: 0.3,
+    flex: 0.7,
   },
   addButton: {
     backgroundColor: RED,

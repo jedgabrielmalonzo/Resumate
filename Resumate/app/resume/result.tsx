@@ -27,19 +27,6 @@ export default function ResumeResultScreen() {
 
   const templateId = selectedTemplateId ?? 'classic';
 
-  useEffect(() => {
-    const autoSave = async () => {
-      if (generatedResumeData && user?.uid && selectedTemplateId) {
-        try {
-          await resumeService.saveResume(user.uid, generatedResumeData, selectedTemplateId);
-          console.log('Resume auto-saved to Firestore');
-        } catch (error) {
-          console.error('Failed to auto-save resume:', error);
-        }
-      }
-    };
-    autoSave();
-  }, [generatedResumeData, user?.uid, selectedTemplateId]);
 
   const handleSavePDF = async () => {
     if (!generatedResumeData) return;

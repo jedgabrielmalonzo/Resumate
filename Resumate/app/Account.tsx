@@ -101,8 +101,7 @@ export default function Account() {
   };
 
   const handleSettings = () => {
-    // No settings page yet, stay on account
-    Alert.alert('Settings', 'Settings page is coming soon!');
+    router.push('/settings');
   };
 
   return (

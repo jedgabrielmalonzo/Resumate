@@ -84,7 +84,7 @@ export default function Home() {
   };
 
   const handleSettings = () => {
-    Alert.alert('Settings', 'Settings page is coming soon!');
+    router.push('/settings');
   };
 
   return (

@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     width: 200,
-    height: 120, // Adjusted height for better vertical balance
+    height: 180, // Restored height to keep logo large
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     flexDirection: 'row',
-    marginTop: 40,
+    marginTop: 10, // Reduced margin to tuck them closer
     gap: 12,
     alignItems: 'center',
     justifyContent: 'center',

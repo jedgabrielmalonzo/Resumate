@@ -113,10 +113,10 @@ export default function ResumeResultScreen() {
             {saving ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <View style={styles.btnContent}>
-                <Ionicons name="download-outline" size={22} color="#fff" style={{ marginRight: 8 }} />
+              <>
+                <Ionicons name="download-outline" size={22} color="#fff" />
                 <Text style={styles.pdfBtnText}>SAVE & DOWNLOAD PDF</Text>
-              </View>
+              </>
             )}
           </TouchableOpacity>
 
@@ -242,7 +242,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   actionBtn: {
-    flex: 1,
     flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: 14,
@@ -250,6 +249,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pdfBtn: {
+    width: '100%',
     backgroundColor: RED,
     shadowColor: RED,
     shadowOffset: { width: 0, height: 4 },
@@ -261,14 +261,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
     fontSize: 16,
-    marginLeft: 0,
-  },
-  btnContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginLeft: 10,
   },
   secondaryBtn: {
+    flex: 1,
     backgroundColor: '#F3F4F6',
     borderWidth: 1,
     borderColor: '#E5E7EB',

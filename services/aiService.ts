@@ -138,26 +138,17 @@ export async function generateResume(userData: any, template: ResumeTemplate): P
   const aiUserData = { ...userData };
   delete aiUserData.photoUri;
 
-  const prompt = `You are a professional resume writer. Generate a complete, well-structured resume as a JSON object for the following person using the "${template.name}" template.
-
-Template sections to include (in order): ${sections}
-Template format type: ${template.formatType}
-Format-specific writing rules: ${formatInstructions}
-
-User Information:
-${JSON.stringify(aiUserData, null, 2)}
-
-
+  const prompt = `You are a professional resume writer. Generate a complete resume as a JSON object for "${template.name}" (${template.formatType}).
+  
 Instructions:
-- Return ONLY a valid JSON object, no explanation or extra text.
-- The JSON must have this exact structure: { "sections": [ { "title": "Section Name", "content": "Section content as plain text" } ] }
-- Each section title must match one of the template sections.
-- Content should be professional, concise, and suitable for an undergraduate or college graduate.
-- If userData.targetRole is provided, place it in the most suitable section for this format (for example: Target Role, Career Objective, Professional Summary, or Summary of Qualifications).
-- Use bullet points (starting with "• ") for lists within content.
-- Keep all text in the content field (do not use nested JSON).
-- Do not wrap bullets in arrays, just use newlines with • prefix.
-- ${lengthGuidance}`;
+- Return ONLY valid JSON: { "sections": [ { "title": "Section Name", "content": "Section content as plain text" } ] }
+- Template sections (MUST MATCH EXACTLY): ${sections}
+- Rules: ${formatInstructions}
+- User Data: ${JSON.stringify(aiUserData)}
+- Use bullet points (•) for lists within content.
+- Professional, concise content for a college student/grad.
+- Include targetRole in the summary if provided.
+- NO extra text. JSON only.`;
 
   const raw = await callGeminiAPI(prompt);
   

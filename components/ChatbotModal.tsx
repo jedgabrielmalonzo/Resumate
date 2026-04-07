@@ -179,6 +179,7 @@ export default function ChatbotModal({ visible, onClose }: Props) {
       animationType="slide"
       transparent={true}
       onRequestClose={onClose}
+      statusBarTranslucent={true}
     >
       <View style={styles.overlay}>
         <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); onClose(); }}>
@@ -187,8 +188,8 @@ export default function ChatbotModal({ visible, onClose }: Props) {
 
         <KeyboardAvoidingView
           style={styles.sheetContainer}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={0}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
           {/* Header */}
           <View style={styles.header}>

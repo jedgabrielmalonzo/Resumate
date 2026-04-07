@@ -425,9 +425,14 @@ export default function ResumeFormScreen() {
       }
 
       router.push('/Account');
-    } catch (error) {
+    } catch (error: any) {
       console.error('GENERATE_RESUME_ERROR:', error);
-      Alert.alert('Error', 'Failed to generate resume. Please try again.');
+      const errorMessage = error?.message || 'Unknown error';
+      Alert.alert(
+        'Generation Failed',
+        `Details: ${errorMessage}\n\nAsk your friend to screenshot this and send it to you if they see this again.`,
+        [{ text: 'OK' }]
+      );
     } finally {
       setGenerating(false);
     }

@@ -113,10 +113,10 @@ export default function ResumeResultScreen() {
             {saving ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <>
-                <Ionicons name="download" size={20} color="#fff" />
-                <Text style={styles.pdfBtnText}>Download as PDF</Text>
-              </>
+              <View style={styles.btnContent}>
+                <Ionicons name="download-outline" size={22} color="#fff" style={{ marginRight: 8 }} />
+                <Text style={styles.pdfBtnText}>SAVE & DOWNLOAD PDF</Text>
+              </View>
             )}
           </TouchableOpacity>
 
@@ -261,7 +261,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
     fontSize: 16,
-    marginLeft: 10,
+    marginLeft: 0,
+  },
+  btnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   secondaryBtn: {
     backgroundColor: '#F3F4F6',

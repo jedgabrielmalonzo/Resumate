@@ -121,6 +121,12 @@ async function callGeminiAPI(prompt: string): Promise<string> {
     }),
   });
   const data = await response.json();
+  
+  if (!data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+    console.error('Gemini Invalid Response:', data);
+    throw new Error('AI returned an empty response. This may be due to safety filters or quota limits.');
+  }
+
   return data.candidates[0].content.parts[0].text;
 }
 

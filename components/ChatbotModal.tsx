@@ -182,7 +182,7 @@ export default function ChatbotModal({ visible, onClose }: Props) {
     >
       <KeyboardAvoidingView
         style={styles.modalRoot}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.overlay}>
           <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); onClose(); }}>
@@ -196,7 +196,7 @@ export default function ChatbotModal({ visible, onClose }: Props) {
                 <View style={styles.headerBotAvatar}>
                   <Ionicons name="sparkles" size={16} color={RED} />
                 </View>
-                <View>
+                <View style={styles.headerTextWrap}>
                   <Text style={styles.headerTitle}>ResumAI</Text>
                   <Text style={styles.headerSubtitle}>Always ready to help</Text>
                 </View>
@@ -274,11 +274,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetContainer: {
-    maxHeight: '90%',
+    height: '85%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    flexDirection: 'column',
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
@@ -296,11 +296,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 1,
     borderBottomColor: '#f1f3f5',
+    backgroundColor: '#fff',
   },
   headerLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
   },
   headerBotAvatar: {
     width: 40,
@@ -311,6 +311,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#e9ecef",
+    marginRight: 12,
+  },
+  headerTextWrap: {
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 18,
@@ -335,12 +339,11 @@ const styles = StyleSheet.create({
   messageList: {
     paddingHorizontal: 20,
     paddingVertical: 24,
-    gap: 0,
   },
   messageRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   messageRowUser: { justifyContent: "flex-end" },
   messageRowBot: { justifyContent: "flex-start" },
@@ -358,7 +361,7 @@ const styles = StyleSheet.create({
   },
 
   bubble: {
-    maxWidth: "75%",
+    maxWidth: "80%",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 20,
@@ -371,14 +374,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4f4f5",
     borderBottomLeftRadius: 4,
   },
-  bubbleText: { fontSize: 15, lineHeight: 22 },
+  bubbleText: { fontSize: 16, lineHeight: 22 },
   userText: { color: "#fff" },
   botText: { color: "#1a1a2e" },
 
   typingWrap: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   typingBubble: {
     flexDirection: "row",
@@ -420,14 +423,14 @@ const styles = StyleSheet.create({
   },
   input: {
     maxHeight: 120,
-    fontSize: 15,
+    fontSize: 16,
     color: "#1a1a2e",
-    minHeight: 20,
+    minHeight: 24,
   },
   sendBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: RED,
     justifyContent: "center",
     alignItems: "center",

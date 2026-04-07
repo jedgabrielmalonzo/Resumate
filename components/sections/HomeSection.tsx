@@ -144,6 +144,7 @@ export default function HomeSection({ onBuildResume, onInterviewPrep, onOpenChat
               <Ionicons name="arrow-forward" size={18} color={RED} style={styles.cardArrow} />
             </TouchableOpacity>
           </View>
+          <Text style={styles.versionText}>v1.0.1 - Latest Update</Text>
         </Animated.View>
       </ScrollView>
 
@@ -278,5 +279,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
+  },
+  versionText: {
+    fontSize: 10,
+    color: "#adb5bd",
+    textAlign: "center",
+    marginTop: 20,
+    marginBottom: 20,
+    opacity: 0.5,
   },
 });

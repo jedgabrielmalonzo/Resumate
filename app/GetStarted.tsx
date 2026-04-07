@@ -137,7 +137,7 @@ export default function GetStartedScreen() {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>ResuMate v1.0 • Resume AI Builder</Text>
+        <Text style={styles.versionText}>ResuMate v1.0.1 - Latest Update</Text>
       </Animated.View>
     </View>
   );

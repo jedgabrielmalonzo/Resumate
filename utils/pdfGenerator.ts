@@ -184,7 +184,18 @@ function buildResumeHTML(data: GeneratedResumeData, templateId: string, base64Ph
 </html>`;
 }
 
-function buildResumeFileName(templateId: string): string {
+function buildResumeFileName(templateId: string, name?: string): string {
+  if (name) {
+    // Sanitize name: remove non-alphanumeric chars (except spaces/underscores) and replace spaces with underscores
+    const sanitizedName = name.trim()
+      .replace(/[^\w\s]/gi, '')
+      .replace(/\s+/g, '_');
+    
+    if (sanitizedName) {
+      return `${sanitizedName}_Resume.pdf`;
+    }
+  }
+  
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   return `resume-${templateId}-${timestamp}.pdf`;
 }
@@ -202,7 +213,7 @@ export async function exportResumeToPDF(
       base64Photo = data.photoUri;
     } else {
       try {
-        const FileSystem = require('expo-file-system');
+        const FileSystem = require('expo-file-system/legacy');
         const rawBase64 = await FileSystem.readAsStringAsync(data.photoUri, { enum: 1, encoding: FileSystem.EncodingType.Base64 });
         base64Photo = `data:image/jpeg;base64,${rawBase64}`;
       } catch (err) {
@@ -211,23 +222,47 @@ export async function exportResumeToPDF(
     }
   }
 
-  const html = buildResumeHTML(data, templateId, base64Photo, legacyColors);
-  const fileName = buildResumeFileName(templateId);
+  // Extract name for personalized filename
+  const contactSection = data.sections.find(s => s.title.toLowerCase().includes('contact'));
+  let name = '';
+  if (contactSection) {
+    const lines = contactSection.content.split('\n').filter(l => l.trim() && !l.includes('Photo: file://'));
+    name = lines.length > 0 ? lines[0] : '';
+  }
 
-  // Generate PDF to app's temp cache — no permissions required.
+  const html = buildResumeHTML(data, templateId, base64Photo, legacyColors);
+  const fileName = buildResumeFileName(templateId, name);
+
+  // Generate PDF to app's temp cache
   const { uri } = await Print.printToFileAsync({ html, base64: false });
 
-  // Open native share sheet so user can save to Downloads, Drive, etc.
+  // IMPORTANT: To show the correct filename in the share sheet, we must rename the file
+  const FileSystem = require('expo-file-system/legacy');
+  const newUri = FileSystem.cacheDirectory + fileName;
+  
+  try {
+    await FileSystem.moveAsync({
+      from: uri,
+      to: newUri,
+    });
+  } catch (moveError) {
+    console.error('Failed to rename PDF for sharing:', moveError);
+    // Fallback to original uri if move fails
+  }
+
+  const finalUri = newUri;
+
+  // Open native share sheet
   const isAvailable = await Sharing.isAvailableAsync();
   if (!isAvailable) {
     throw new Error('Sharing is not available on this device.');
   }
 
-  await Sharing.shareAsync(uri, {
+  await Sharing.shareAsync(finalUri, {
     mimeType: 'application/pdf',
     dialogTitle: 'Save your resume',
     UTI: 'com.adobe.pdf',
   });
 
-  return { fileName, uri };
+  return { fileName, uri: finalUri };
 }

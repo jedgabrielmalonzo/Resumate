@@ -434,6 +434,53 @@ export default function ResumeFormScreen() {
   };
 
   const handleBuildResume = async () => {
+    // FORM VALIDATION
+    const missingFields: string[] = [];
+
+    // Personal Info Validation
+    const pi = personalInfo;
+    if (!pi.firstName) missingFields.push('First Name');
+    if (!pi.lastName) missingFields.push('Last Name');
+    if (!pi.email) missingFields.push('Email Address');
+    if (!pi.phone) missingFields.push('Phone Number');
+    if (!pi.address) missingFields.push('Street Address');
+    if (!pi.city) missingFields.push('City');
+    if (!pi.state) missingFields.push('State');
+    if (!pi.zipCode) missingFields.push('ZIP Code');
+
+    // Job Title & Summary
+    if (!targetRole) missingFields.push('Target Job Title');
+    if (!professionalSummary) missingFields.push('Professional Summary');
+
+    // Work Experience (Conditional)
+    if (hasWorkExperience) {
+      const hasValidWork = workExperience.some(we => we.jobTitle && we.company);
+      if (!hasValidWork) {
+        missingFields.push('At least one Work Experience (Job Title & Company)');
+      }
+    }
+
+    // Education
+    const hasValidEducation = education.some(edu => edu.degree && edu.institution);
+    if (!hasValidEducation) {
+      missingFields.push('At least one Education record (Degree & Institution)');
+    }
+
+    // Skills
+    const hasValidSkills = skills.some(skill => skill.trim() !== '');
+    if (!hasValidSkills) {
+      missingFields.push('At least one Skill');
+    }
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Required Fields',
+        `Please complete the following mandatory sections:\n\n• ${missingFields.join('\n• ')}`,
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
     setLoadingTemplates(true);
 
     const userData = {

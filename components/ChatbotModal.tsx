@@ -149,7 +149,6 @@ export default function ChatbotModal({ visible, onClose }: Props) {
     setIsTyping(true);
 
     try {
-      // Build history to send (exclude welcome, which is UI-only)
       const history = messages.filter((m) => m.id !== "welcome");
       const responseText = await sendChatMessage(history, text);
 
@@ -181,87 +180,91 @@ export default function ChatbotModal({ visible, onClose }: Props) {
       onRequestClose={onClose}
       statusBarTranslucent={true}
     >
-      <View style={styles.overlay}>
-        <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); onClose(); }}>
-          <View style={styles.touchableBackdrop} />
-        </TouchableWithoutFeedback>
+      <KeyboardAvoidingView
+        style={styles.modalRoot}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <View style={styles.overlay}>
+          <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); onClose(); }}>
+            <View style={styles.touchableBackdrop} />
+          </TouchableWithoutFeedback>
 
-        <KeyboardAvoidingView
-          style={styles.sheetContainer}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <View style={styles.headerBotAvatar}>
-                <Ionicons name="sparkles" size={16} color={RED} />
-              </View>
-              <View>
-                <Text style={styles.headerTitle}>ResumAI</Text>
-                <Text style={styles.headerSubtitle}>Always ready to help</Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.closeBtn}
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-            >
-              <Ionicons name="close" size={24} color="#adb5bd" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Messages */}
-          <View style={styles.flex}>
-            <FlatList
-              ref={listRef}
-              data={messages}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <MessageBubble message={item} />}
-              contentContainerStyle={styles.messageList}
-              onContentSizeChange={scrollToEnd}
-              ListFooterComponent={isTyping ? <TypingIndicator /> : null}
-              showsVerticalScrollIndicator={false}
-            />
-
-            {/* Input bar */}
-            <View style={styles.inputBar}>
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  style={styles.input}
-                  value={input}
-                  onChangeText={setInput}
-                  placeholder="Ask me anything..."
-                  placeholderTextColor="#adb5bd"
-                  multiline
-                  maxLength={500}
-                  editable={!isTyping}
-                />
+          <View style={styles.sheetContainer}>
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={styles.headerLeft}>
+                <View style={styles.headerBotAvatar}>
+                  <Ionicons name="sparkles" size={16} color={RED} />
+                </View>
+                <View>
+                  <Text style={styles.headerTitle}>ResumAI</Text>
+                  <Text style={styles.headerSubtitle}>Always ready to help</Text>
+                </View>
               </View>
               <TouchableOpacity
-                style={[
-                  styles.sendBtn,
-                  (!input.trim() || isTyping) && styles.sendBtnDisabled,
-                ]}
-                onPress={handleSend}
-                disabled={!input.trim() || isTyping}
-                activeOpacity={0.8}
+                onPress={onClose}
+                style={styles.closeBtn}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                {isTyping ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Ionicons name="arrow-up" size={20} color="#fff" />
-                )}
+                <Ionicons name="close" size={24} color="#adb5bd" />
               </TouchableOpacity>
             </View>
+
+            {/* Messages */}
+            <View style={styles.flex}>
+              <FlatList
+                ref={listRef}
+                data={messages}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <MessageBubble message={item} />}
+                contentContainerStyle={styles.messageList}
+                onContentSizeChange={scrollToEnd}
+                ListFooterComponent={isTyping ? <TypingIndicator /> : null}
+                showsVerticalScrollIndicator={false}
+              />
+
+              {/* Input bar */}
+              <View style={styles.inputBar}>
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    style={styles.input}
+                    value={input}
+                    onChangeText={setInput}
+                    placeholder="Ask me anything..."
+                    placeholderTextColor="#adb5bd"
+                    multiline
+                    maxLength={500}
+                    editable={!isTyping}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.sendBtn,
+                    (!input.trim() || isTyping) && styles.sendBtnDisabled,
+                  ]}
+                  onPress={handleSend}
+                  disabled={!input.trim() || isTyping}
+                  activeOpacity={0.8}
+                >
+                  {isTyping ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Ionicons name="arrow-up" size={20} color="#fff" />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </KeyboardAvoidingView>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  modalRoot: {
+    flex: 1,
+  },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -271,7 +274,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetContainer: {
-    height: '85%',
+    maxHeight: '90%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -284,7 +287,6 @@ const styles = StyleSheet.create({
   },
   flex: { flex: 1 },
 
-  // Header
   header: {
     paddingHorizontal: 24,
     paddingTop: 24,
@@ -330,7 +332,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // Messages
   messageList: {
     paddingHorizontal: 20,
     paddingVertical: 24,
@@ -367,14 +368,13 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
   },
   botBubble: {
-    backgroundColor: "#f4f4f5", // Light sleek gray
+    backgroundColor: "#f4f4f5",
     borderBottomLeftRadius: 4,
   },
   bubbleText: { fontSize: 15, lineHeight: 22 },
   userText: { color: "#fff" },
   botText: { color: "#1a1a2e" },
 
-  // Typing
   typingWrap: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -397,7 +397,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#adb5bd",
   },
 
-  // Input bar
   inputBar: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -432,7 +431,7 @@ const styles = StyleSheet.create({
     backgroundColor: RED,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 2, // align visually with single line input
+    marginBottom: 2,
   },
   sendBtnDisabled: {
     backgroundColor: "#e9ecef",

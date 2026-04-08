@@ -182,7 +182,8 @@ export default function ChatbotModal({ visible, onClose }: Props) {
     >
       <KeyboardAvoidingView
         style={styles.modalRoot}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
         <View style={styles.overlay}>
           <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); onClose(); }}>
@@ -274,7 +275,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetContainer: {
-    height: '85%',
+    maxHeight: '85%',
+    flex: 1,
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
